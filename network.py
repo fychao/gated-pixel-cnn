@@ -46,7 +46,7 @@ class Network:
     
     logger.info("Building loss and optims")    
     self.loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
-       flattened_logits, target_pixels_loss))
+       logits=flattened_logits, labels=target_pixels_loss))
 
     flattened_output = tf.nn.softmax(flattened_logits) #shape [NHWC,D], values [probability distribution]
     self.output = tf.reshape(flattened_output, [-1, height, width, num_channels, q_levels]) #shape [N,H,W,C,D], values [probability distribution]

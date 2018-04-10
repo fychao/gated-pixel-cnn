@@ -69,7 +69,8 @@ def gated_conv(inputs, kernel_shape, data_num_channels, scope="gated_conv"):
   with tf.variable_scope(scope):
     # Horiz inputs/outputs on left in case num_inputs not multiple of 6, because Horiz is RGB gated and Vert is not.
     # inputs shape [N,H,W,C]
-    horiz_inputs, vert_inputs  = tf.split(3, 2, inputs)  
+    #horiz_inputs, vert_inputs  = tf.split(3, 2, inputs) #https://goo.gl/Gnsmfh
+    horiz_inputs, vert_inputs  = tf.split(inputs, 2, 3) #https://goo.gl/Gnsmfh
     p = get_shape(horiz_inputs)[-1]
     p2 = 2 * p
 
@@ -100,7 +101,8 @@ def gated_conv(inputs, kernel_shape, data_num_channels, scope="gated_conv"):
     
     horiz_outputs = horiz_1x1 + horiz_inputs
      
-    return tf.concat(3, [horiz_outputs, vert_gated_out]) 
+    #return tf.concat(3, [horiz_outputs, vert_gated_out]) 
+    return tf.concat([horiz_outputs, vert_gated_out], 3) 
   
 def _create_mask(    
     num_inputs,
@@ -149,7 +151,8 @@ def _gated_activation_unit(inputs, kernel_shape, mask_type, data_num_channels, s
     # 2p in channels, 2p out channels, mask, same padding, stride 1
     # split 2p out channels into p going to tanh and p going to sigmoid
     bd_out = conv(inputs, p2, kernel_shape, mask_type, data_num_channels, scope="blue_diamond") #[N,H,W,C[,D]]
-    bd_out_0, bd_out_1 = tf.split(3, 2, bd_out)
+    #bd_out_0, bd_out_1 = tf.split(3, 2, bd_out)
+    bd_out_0, bd_out_1 = tf.split(bd_out, 2, 3)
     tanh_out = tf.tanh(bd_out_0)
     sigmoid_out = tf.sigmoid(bd_out_1)
       
